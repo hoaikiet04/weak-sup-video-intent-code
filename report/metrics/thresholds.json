@@ -1,0 +1,20 @@
+{
+  "IntentMovie": 0.39999999999999997,
+  "IntentTvSeries": 0.3,
+  "Theme": 0.05,
+  "Genre": 0.35,
+  "CastAndCrew": 0.05,
+  "TVSeriesName": 0.05,
+  "MovieName": 0.05,
+  "StreamingService": 0.3,
+  "Recency": 0.2,
+  "Popularity": 0.05,
+  "ReleaseYear": 0.39999999999999997,
+  "Decade": 0.15,
+  "FreeContent": 0.05,
+  "AudioLanguage": 0.2,
+  "Franchise": 0.3,
+  "Holiday": 0.15,
+  "Sport": 0.1,
+  "Character": 0.5499999999999999
+}
