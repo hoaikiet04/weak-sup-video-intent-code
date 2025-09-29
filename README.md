@@ -14,7 +14,7 @@
 
 ---
 
-## 📁 Cấu trúc thư mục (theo ZIP)
+## 📁 Cấu trúc thư mục
 
 ```
 
