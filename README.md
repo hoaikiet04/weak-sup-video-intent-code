@@ -1,83 +1,64 @@
-```markdown
-# LLM-based Weak Supervision for Query Intent in Video Search
+# 🎯 LLM-based Weak Supervision for Video Query Intent Classification
 
-> Multi‑label NLU + LLM‑based weak supervision cho truy vấn tìm kiếm video.  
-> Demo: FastAPI (API) + Flask (UI), có Explain ngắn theo từng nhãn.
+> Multi-label NLU + LLM-based weak supervision cho truy vấn tìm kiếm video.  
+> **Demo**: FastAPI (API) + Flask (UI) + Explain reasoning theo từng nhãn.
+
+---
 
 ## ✨ Điểm nổi bật
-
-- **Weak supervision bằng LLM** (CoT + ICL + Confidence; hỗ trợ **GROQ**/**OpenAI**).
-- **BERT-base** đa nhãn (BCEWithLogits + sigmoid), **tối ưu ngưỡng per‑label** trên dev.
-- Xuất **PR‑curve** từng nhãn; **API FastAPI** + **Flask UI** dark mode, có **Explain**.
-- Repo chạy được trên Windows/macOS/Linux (CPU/GPU).
+- 🧠 **Weak supervision bằng LLM** (CoT + ICL + Confidence; hỗ trợ **GROQ**/**OpenAI**)
+- 🤖 **BERT-base** đa nhãn (BCEWithLogits + sigmoid), tối ưu ngưỡng *per-label* trên dev
+- 📊 Xuất **PR-curve** từng nhãn
+- 🌑 **Flask UI** dark mode + explain reasoning
+- 💻 Repo chạy được trên Windows / macOS / Linux (CPU/GPU)
 
 ---
 
 ## 📁 Cấu trúc thư mục
-```
-
 .
-├── .env
-├── .gitignore
-├── README.md
-├── data/
-│ ├── queries_raw.jsonl
-│ ├── synthetic_queries.jsonl
-│ ├── weak_labels.jsonl
-│ └── splits/
-│ ├── train.jsonl
-│ ├── dev.jsonl
-│ └── test.jsonl
-├── models/ # (trống trên repo)
+├── data/ # queries_raw.jsonl, synthetic_queries.jsonl, weak_labels.jsonl
+├── models/ # (trống – tải checkpoint về đặt ở đây)
 ├── report/
-│ ├── figures/ Precision–Recall curve, biểu đồ so sánh ngưỡng và kết quả huấn luyện.  
-│ │  
-│ └── metrics/ Lưu các số liệu đánh giá chi tiết và các file JSON ngưỡng tối ưu per-label.
-│  
-└── src/
-├── api.py # FastAPI: /predict
-├── demo_flask.py # Flask UI
-├── eval_bert.py # Đánh giá + PR-curve + tối ưu ngưỡng
-├── gen_queries.py # Sinh truy vấn synthetic
-├── train_bert.py # Huấn luyện BERT đa nhãn (+ ENTITIES)
-└── weak_label_llm.py # Gán nhãn yếu bằng LLM (GROQ)
-└── **pycache**/ # file biên dịch tạm của Python
+│ ├── figures/ # Precision–Recall curves, biểu đồ so sánh
+│ └── metrics/ # CSV + thresholds.json
+├── src/
+│ ├── api.py # FastAPI endpoint
+│ ├── demo_flask.py # Flask UI
+│ ├── train_bert.py # Huấn luyện BERT đa nhãn
+│ ├── eval_bert.py # Đánh giá + tối ưu ngưỡng
+│ └── weak_label_llm.py # Gán nhãn yếu bằng LLM
+└── README.md
 
-```
+markdown
+Sao chép mã
 
-**Chú thích nhanh**
-- `data/queries_raw.jsonl`: truy vấn thô; `data/synthetic_queries.jsonl`: truy vấn sinh tự động.
-- `data/weak_labels.jsonl`: nhãn yếu từ LLM (có thể kèm reasoning).
-- `report/metrics/*.csv` + `thresholds.json`: số liệu và ngưỡng tối ưu per‑label.
-- `models/`: nơi đặt checkpoint `.pt4` (không theo git).
+📌 **Ghi chú:**
+- `models/` chứa checkpoint `.pt4` (không push lên repo)
+- `report/metrics/*.json|csv` chứa kết quả đánh giá & ngưỡng tối ưu
+- `data/` chứa dữ liệu thô, synthetic và weak labels
 
 ---
 
-## 📦 Checkpoint model (Google Drive)
-Do file lớn, checkpoint **không commit lên repo**. Tải tại đây rồi **đặt vào `models/`**:
+## 📦 Checkpoint Model
 
-**➡️ [Google Drive – bert_intent.pt4](https://drive.google.com/file/d/1jeLlZy70Z0az1lF8uLxJclo0KotFCexx/view?usp=sharing)**
+Do file quá lớn nên **không commit lên repo**.  
+➡️ [**Download từ Google Drive**](https://drive.google.com/file/d/1jeLlZy70Z0az1lF8uLxJclo0KotFCexx/view?usp=sharing)
 
-Sau khi tải xong:
-```
+Sau khi tải, đặt vào thư mục `models/`:
 
 models/
 └── bert_intent.pt4
 
-````
-> Nếu tên file tải về khác, vui lòng **đổi tên về `bert_intent.pt4`** (hoặc cập nhật biến môi trường `CKPT_PATH` cho khớp).
+yaml
+Sao chép mã
+
+> Nếu tên file khác, hãy đổi lại thành `bert_intent.pt4`  
+> hoặc cập nhật biến môi trường `CKPT_PATH`.
 
 ---
 
-## 🔧 Yêu cầu & Cài đặt
+## 🔧 Cài đặt
 
-### 1) Python & thư viện
-- Python **3.10+**
-- PyTorch (CPU/GPU tuỳ máy), Transformers, FastAPI, Uvicorn, Flask
-- scikit‑learn, matplotlib, numpy, tqdm, pydantic, requests
-- **GROQ** và/hoặc **OpenAI** SDK; **python‑dotenv** (đọc `.env`)
-
-Cài nhanh (gợi ý):
 ```bash
 python -m venv .venv
 # Windows
@@ -85,127 +66,56 @@ python -m venv .venv
 # macOS/Linux
 source .venv/bin/activate
 
-pip install torch transformers fastapi uvicorn flask requests \
-            scikit-learn matplotlib numpy tqdm pydantic python-dotenv \
-            groq openai
-````
+pip install -r requirements.txt
+Tạo file .env để thiết lập API key:
 
-### 2) Khóa API (.env)
-
-Tạo file `.env` ở thư mục gốc (nếu chưa có) để chạy gán nhãn yếu bằng LLM:
-
-```
-GROQ_API_KEY=xxxxx      # nếu dùng GROQ
-OPENAI_API_KEY=xxxxx    # nếu dùng OpenAI
-```
-
----
-
-## 🚀 Chạy nhanh
-
-### A) API (FastAPI)
-
-Thiết lập biến môi trường và chạy server:
-
-**Windows (cmd)**
-
-```cmd
+ini
+Sao chép mã
+GROQ_API_KEY=xxxxx
+OPENAI_API_KEY=xxxxx
+🚀 Chạy nhanh
+1️⃣ API (FastAPI)
+bash
+Sao chép mã
 set CKPT_PATH=models\bert_intent.pt4
 set THRESHOLDS_PATH=report\metrics\thresholds.json
-set WEAK_LABELS_PATH=data\weak_labels.jsonl
 uvicorn src.api:app --reload --port 8000
-```
-
-**macOS/Linux (bash)**
-
-```bash
-export CKPT_PATH=models/bert_intent.pt4
-export THRESHOLDS_PATH=report/metrics/thresholds.json
-export WEAK_LABELS_PATH=data/weak_labels.jsonl
-uvicorn src.api:app --reload --port 8000
-```
-
-Gọi thử:
-
-```bash
-curl -X POST http://127.0.0.1:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"query":"best horror movies from the 90s on Netflix","explain":true,"explain_source":"rule"}'
-```
-
-### B) Demo Web (Flask)
-
-```bash
-# Windows
+2️⃣ Demo UI (Flask)
+bash
+Sao chép mã
 set API_URL=http://127.0.0.1:8000/predict
-# macOS/Linux
-export API_URL=http://127.0.0.1:8000/predict
-
 python src/demo_flask.py
 # Mở http://127.0.0.1:5000
-```
+🧪 Quy trình huấn luyện
+Sinh synthetic queries
 
----
-
-## 🧪 Quy trình thao tác
-
-1. **Sinh truy vấn**:
-
-```bash
+bash
+Sao chép mã
 python src/gen_queries.py --out data/synthetic_queries.jsonl --n 2500
-```
+Gán nhãn yếu bằng LLM
 
-2. **Gán nhãn yếu bằng LLM** (GROQ/OpenAI):
+bash
+Sao chép mã
+python src/weak_label_llm.py --in data/synthetic_queries.jsonl --out data/weak_labels.jsonl
+Huấn luyện BERT
 
-```bash
-python src/weak_label_llm.py \
-  --in data/synthetic_queries.jsonl \
-  --out data/weak_labels.jsonl \
-  --provider groq \
-  --personas "Movie Critic,Merchandiser,Horror Aficionado"
-```
+bash
+Sao chép mã
+python src/train_bert.py --epochs 4 --batch_size 32 --ckpt models/bert_intent.pt4
+Đánh giá + PR-curve
 
-3. **Huấn luyện BERT đa nhãn**:
-
-```bash
-python src/train_bert.py \
-  --epochs 4 --batch_size 32 --max_len 128 --lr 1e-5 \
-  --ckpt models/bert_intent.pt4
-```
-
-4. **Đánh giá & vẽ PR‑curve** (tạo `thresholds.json`, `report/figures/*.png`, `report/metrics/*.csv`):
-
-```bash
+bash
+Sao chép mã
 python src/eval_bert.py --ckpt models/bert_intent.pt4
-# tuỳ chọn: --beta 0.5 (ưu precision) hoặc --mode precfloor --precision_floor 0.8
-```
+📊 Kết quả
+PR-curve: report/figures/pr_<Label>.png
 
----
+Ngưỡng tối ưu: report/metrics/thresholds.json
 
-## 📊 Kết quả & file đầu ra
+Chỉ số tổng hợp: report/metrics/model_agg.csv
 
-- PR‑curve: `report/figures/pr_<Label>.png`
-- Ngưỡng tối ưu per‑label: `report/metrics/thresholds.json`
-- Tổng hợp chỉ số: `report/metrics/model_agg.csv`, `model_per_label.csv`
-- Baseline lexical (tham khảo): `report/metrics/baseline_*.csv`
+📚 Tham khảo
+F. Javadi et al., "LLM-based Weak Supervision Framework for Query Intent Classification in Video Search", arXiv:2409.08931 (2024)
 
-> Lưu ý: baseline lexical có rủi ro **data leakage** nếu trùng cơ chế sinh/đánh nhãn; nên dùng **weak labels từ LLM** + **mini human‑gold** để đánh giá khách quan.
-
----
-
-## 🧩 Troubleshooting
-
-- `FileNotFoundError: models/bert_intent.pt4` → chưa tải/đặt checkpoint, xem mục **Checkpoint model** ở trên.
-- Treo DataLoader trên Windows → đặt `num_workers=0`.
-- `token_type_ids unexpected` → trong `BertMultiLabel.forward()` bỏ tham số này hoặc không truyền `token_type_ids`.
-- Explain không hiện → kiểm tra `WEAK_LABELS_PATH` có trường `reasoning`; API có fallback **rule‑based**.
-
----
-
-## 📚 Tham khảo
-
-- F. Javadi et al., “LLM-based Weak Supervision Framework for Query Intent Classification in Video Search,” arXiv:2409.08931 (2024).
-
-```
-
-```
+css
+Sao chép mã
